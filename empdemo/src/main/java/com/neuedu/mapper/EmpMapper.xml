@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.mapper.EmpMapper">
+    <resultMap id="empDept" type="com.neuedu.entity.Emp">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="phone" column="phone"/>
+        <result property="sex" column="sex"/>
+        <result property="salary" column="salary"/>
+        <result property="dept_id" column="dept_id"/>
+        <association property="dept" javaType="com.neuedu.entity.Dept">
+            <id property="id" column="dept_id"/>
+            <result property="dname" column="dname"/>
+            <result property="location" column="location"/>
+        </association>
+    </resultMap>
+
+    <select id="empList" resultMap="empDept">
+        SELECT a.id,a.name,phone,sex,salary,dept_id,dname,location FROM e_emp a inner join e_dept b on a.dept_id = b.id
+    </select>
+    <select id="getEmpById" resultType="com.neuedu.entity.Emp">
+        SELECT id,name,phone,sex,salary,dept_id from e_emp where id=#{id};
+    </select>
+    <select id="getCount" resultType="Integer">
+        SELECT COUNT(id) FROM e_emp;
+    </select>
+    <delete id="deleteEmpById">
+        DELETE from e_emp where id in
+        <foreach collection="array" open="(" close=")" item="item" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+    <insert id="saveEmp">
+        INSERT INTO e_emp (name,phone,sex,salary,dept_id)
+        VALUES(#{emp.name},#{emp.phone},#{emp.sex},#{emp.salary},#{emp.dept_id})
+    </insert>
+    <update id="updateEmpById">
+        UPDATE e_emp set name=#{emp.name},phone=#{emp.phone},sex=#{emp.sex},salary=#{emp.salary},dept_id=#{emp.dept_id} where id=#{emp.id}
+    </update>
+</mapper>
